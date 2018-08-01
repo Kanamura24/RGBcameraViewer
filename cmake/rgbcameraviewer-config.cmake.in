@@ -1,0 +1,54 @@
+# RGBcameraViewer CMake config file
+#
+# This file sets the following variables:
+# RGBcameraViewer_FOUND - Always TRUE.
+# RGBcameraViewer_INCLUDE_DIRS - Directories containing the RGBcameraViewer include files.
+# RGBcameraViewer_IDL_DIRS - Directories containing the RGBcameraViewer IDL files.
+# RGBcameraViewer_LIBRARIES - Libraries needed to use RGBcameraViewer.
+# RGBcameraViewer_DEFINITIONS - Compiler flags for RGBcameraViewer.
+# RGBcameraViewer_VERSION - The version of RGBcameraViewer found.
+# RGBcameraViewer_VERSION_MAJOR - The major version of RGBcameraViewer found.
+# RGBcameraViewer_VERSION_MINOR - The minor version of RGBcameraViewer found.
+# RGBcameraViewer_VERSION_REVISION - The revision version of RGBcameraViewer found.
+# RGBcameraViewer_VERSION_CANDIDATE - The candidate version of RGBcameraViewer found.
+
+message(STATUS "Found RGBcameraViewer-@PROJECT_VERSION@")
+set(RGBcameraViewer_FOUND TRUE)
+
+find_package(<dependency> REQUIRED)
+
+#set(RGBcameraViewer_INCLUDE_DIRS
+#    "@CMAKE_INSTALL_PREFIX@/include/@PROJECT_NAME_LOWER@-@PROJECT_VERSION_MAJOR@"
+#    ${<dependency>_INCLUDE_DIRS}
+#    )
+#
+#set(RGBcameraViewer_IDL_DIRS
+#    "@CMAKE_INSTALL_PREFIX@/include/@PROJECT_NAME_LOWER@-@PROJECT_VERSION_MAJOR@/idl")
+set(RGBcameraViewer_INCLUDE_DIRS
+    "@CMAKE_INSTALL_PREFIX@/include/@CPACK_PACKAGE_FILE_NAME@"
+    ${<dependency>_INCLUDE_DIRS}
+    )
+set(RGBcameraViewer_IDL_DIRS
+    "@CMAKE_INSTALL_PREFIX@/include/@CPACK_PACKAGE_FILE_NAME@/idl")
+
+
+if(WIN32)
+    set(RGBcameraViewer_LIBRARIES
+        "@CMAKE_INSTALL_PREFIX@/@LIB_INSTALL_DIR@/@CMAKE_SHARED_LIBRARY_PREFIX@@PROJECT_NAME_LOWER@@CMAKE_STATIC_LIBRARY_SUFFIX@"
+        ${<dependency>_LIBRARIES}
+        )
+else(WIN32)
+    set(RGBcameraViewer_LIBRARIES
+        "@CMAKE_INSTALL_PREFIX@/@LIB_INSTALL_DIR@/@CMAKE_SHARED_LIBRARY_PREFIX@@PROJECT_NAME_LOWER@@CMAKE_SHARED_LIBRARY_SUFFIX@"
+        ${<dependency>_LIBRARIES}
+        )
+endif(WIN32)
+
+set(RGBcameraViewer_DEFINITIONS ${<dependency>_DEFINITIONS})
+
+set(RGBcameraViewer_VERSION @PROJECT_VERSION@)
+set(RGBcameraViewer_VERSION_MAJOR @PROJECT_VERSION_MAJOR@)
+set(RGBcameraViewer_VERSION_MINOR @PROJECT_VERSION_MINOR@)
+set(RGBcameraViewer_VERSION_REVISION @PROJECT_VERSION_REVISION@)
+set(RGBcameraViewer_VERSION_CANDIDATE @PROJECT_VERSION_CANDIDATE@)
+
