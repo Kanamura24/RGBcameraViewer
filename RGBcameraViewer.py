@@ -73,6 +73,11 @@ class RGBcameraViewer(OpenRTM_aist.DataFlowComponentBase):
 		"""
 		self._RGBcameraImageIn = OpenRTM_aist.InPort("RGBcameraImage", self._d_RGBcameraImage)
 
+                
+                self._d_checkPoint = RTC.TimedBoolean(RTC.Time(0,0),0)
+		"""
+		"""
+		self._checkPointIn = OpenRTM_aist.InPort("checkPoint", self._d_checkPoint)
 
 		
 
@@ -97,6 +102,7 @@ class RGBcameraViewer(OpenRTM_aist.DataFlowComponentBase):
 		
 		# Set InPort buffers
 		self.addInPort("RGBcameraImage",self._RGBcameraImageIn)
+                self.addInPort("checkPoint",self._checkPointIn)
 		
 		# Set OutPort buffers
 		
@@ -163,8 +169,8 @@ class RGBcameraViewer(OpenRTM_aist.DataFlowComponentBase):
 
                 #cv2.namedWindow("img", cv2.WINDOW_AUTOSIZE)
 
-                self._img = np.zeros((480, 640, 3), np.uint8)
-
+                self._img = np.zeros((768, 1024, 3), np.uint8)
+                self._storedPoint = None
 	
 		return RTC.RTC_OK
 	
@@ -197,20 +203,46 @@ class RGBcameraViewer(OpenRTM_aist.DataFlowComponentBase):
 		#
 	def onExecute(self, ec_id):
 
+                 #Timer
+                if self._checkPointIn.isNew():
+                        inJudge = self._checkPointIn.read()
+
+                        self._storedPoint = inJadge.data;
+                        
+                        if self._storedPoint == 1:
+                                pointCount = '●'
+                        else:
+                                pointCount = '○'
+                        
+                        
+                        
+
+                #cameraImage
+                
                 if self._RGBcameraImageIn.isNew():
                         img = self._RGBcameraImageIn.read()
                         global cameraImageQueue
                         lock.acquire()
                         # cameraImage = np.zeros((480, 640, 3), np.uint8)
-                        cameraImage = np.fromstring(img.pixels, dtype = np.uint8).reshape(img.height, img.width, -1)
+                        cameraImage = np.fromstring(img.pixels, dtype = np.uint8).reshape(768, 1024, -1)
 
-                        cv2.putText(cameraImage, 'Time', (0,50), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 0), 3, cv2.LINE_AA)
+                        if not self._storedPoint == None:
+                                                                
+                                cv2.putText(cameraImage,
+                                            '%s' % (pointCount),
+                                            (0,50),
+                                            cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 0), 3, cv2.LINE_AA)
                         cameraImageQueue.append(cameraImage)
                         lock.release()
 
                         # cv2.imshow('image', cvimage)
                         # cv2.waitKey(-1)
 
+
+              
+
+
+                        
 		return RTC.RTC_OK
 	
 	#	##
