@@ -186,6 +186,7 @@ class RGBcameraViewer(OpenRTM_aist.DataFlowComponentBase):
 		#
 	def onDeactivated(self, ec_id):
 
+                
                 cv2.destroyAllWindows()
                 print("Stop image view.")
                 
@@ -207,12 +208,19 @@ class RGBcameraViewer(OpenRTM_aist.DataFlowComponentBase):
                 if self._checkPointIn.isNew():
                         inJudge = self._checkPointIn.read()
 
-                        self._storedPoint = inJadge.data;
+                        self._storedPoint = inJudge.data;
+
+
+                        global pointCount
+                        global textColor
                         
                         if self._storedPoint == 1:
-                                pointCount = '●'
+                                pointCount = 'o'
+                                textColor = 255, 0, 0
+                                
                         else:
-                                pointCount = '○'
+                                pointCount = 'x'
+                                textColor = 0, 0, 255
                         
                         
                         
@@ -224,14 +232,15 @@ class RGBcameraViewer(OpenRTM_aist.DataFlowComponentBase):
                         global cameraImageQueue
                         lock.acquire()
                         # cameraImage = np.zeros((480, 640, 3), np.uint8)
-                        cameraImage = np.fromstring(img.pixels, dtype = np.uint8).reshape(768, 1024, -1)
+                        cameraImage = np.fromstring(img.pixels, dtype = np.uint8).reshape(img.height, img.width, -1)
 
                         if not self._storedPoint == None:
                                                                 
                                 cv2.putText(cameraImage,
+                                            #'%d' % (pointCount),
                                             '%s' % (pointCount),
                                             (0,50),
-                                            cv2.FONT_HERSHEY_COMPLEX, 1, (0, 0, 0), 3, cv2.LINE_AA)
+                                            cv2.FONT_HERSHEY_COMPLEX, 1, (textColor), 3, cv2.LINE_AA)
                         cameraImageQueue.append(cameraImage)
                         lock.release()
 
@@ -359,7 +368,6 @@ def main():
                 if showImage() == True:
                         return
 
-        cv2.destroyAllWindows()
 
 if __name__ == "__main__":
 	main()
